@@ -1,0 +1,10 @@
+{
+    "new-dir-infos": [
+        "effect/fighter/samus/trail/"
+    ],
+    "new-dir-files": {
+        "fighter/samus/cmn/effect": [
+            "effect/fighter/samus/trail/tex_samus_trail1.nutexb"
+        ]
+    }
+}

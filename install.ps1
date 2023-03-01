@@ -1,0 +1,1 @@
+cargo skyline install --install-path "sd:/ultimate/mods/microwario/plugin.nro"
