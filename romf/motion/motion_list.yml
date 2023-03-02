@@ -2321,8 +2321,35 @@ list:
     extra:
       xlu_start: 0
       xlu_end: 0
-      cancel_frame: 48
+      cancel_frame: 58
       no_stop_intp: true
+  attack_air_lw2:
+    game_script: game_attackairlw2
+    flags:
+      turn: false
+      loop: false
+      move: false
+      fix_trans: false
+      fix_rot: false
+      fix_scale: false
+      unk_40: false
+      unk_80: true
+      unk_100: false
+      unk_200: false
+      unk_400: false
+    blend_frames: 0
+    animations:
+      - name: d03specialairlwflyr.nuanmb
+        unk: 0
+    scripts:
+      - expression_attackairlw2
+      - sound_attackairlw2
+      - effect_attackairlw2
+    extra:
+      xlu_start: 0
+      xlu_end: 0
+      cancel_frame: 55
+      no_stop_intp: false
   landing_air_n:
     game_script: game_landingairn
     flags:

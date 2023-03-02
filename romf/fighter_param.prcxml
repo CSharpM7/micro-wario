@@ -33,6 +33,7 @@
     <hash40 index="29">dummy</hash40>
     <struct index="30">
       <float hash="landing_attack_air_frame_b">16</float>
+      <float hash="landing_attack_air_frame_lw">29</float>
     </struct>
     <hash40 index="31">dummy</hash40>
     <hash40 index="32">dummy</hash40>

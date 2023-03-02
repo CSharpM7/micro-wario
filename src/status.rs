@@ -156,6 +156,30 @@ unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     return false.into();
 }
 
+
+#[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_LANDING_ATTACK_AIR, condition = LUA_SCRIPT_STATUS_FUNC_EXIT_STATUS)]
+unsafe fn wario_landing_attack_exit(fighter: &mut L2CFighterCommon) -> L2CValue {
+    macros::EFFECT_OFF_KIND(fighter, Hash40::new("sys_merikomi"),false,true);
+    return false.into();
+}
+#[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_ATTACK_AIR, condition = LUA_SCRIPT_STATUS_FUNC_EXEC_STATUS)]
+unsafe fn wario_attack_air_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
+    let dairAnim = Hash40::new("attack_air_lw");
+    let dairRiseAnim = Hash40::new("attack_air_lw2");
+    
+    if MotionModule::motion_kind(fighter.module_accessor) != dairAnim.hash{
+        return false.into();
+    }
+    if (AttackModule::is_infliction_status(fighter.module_accessor,  *COLLISION_KIND_MASK_HIT | *COLLISION_KIND_MASK_SHIELD)){
+        MotionModule::change_motion(fighter.module_accessor, dairRiseAnim, 18.0, 1.0, false, 0.0, false, false);
+        macros::EFFECT_OFF_KIND(fighter, Hash40::new("sys_machstamp"),false,true);
+        AttackModule::clear_all(fighter.module_accessor);
+        println!("Request bounce");
+    }
+    
+    return false.into();
+}
+
 pub fn install() {
     install_status_scripts!(
         wario_catch_attack_exec,
@@ -166,6 +190,9 @@ pub fn install() {
         wario_throwk_main,
         wario_throwk_exit,
         wario_throwk_end,
-        wario_throwk_exec
+        wario_throwk_exec,
+
+        wario_landing_attack_exit,
+        wario_attack_air_exec
     );
 }
