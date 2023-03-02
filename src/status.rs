@@ -47,12 +47,12 @@ unsafe fn wario_throw_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     let throwB = Hash40::new("throw_b");
     let throwDriver = Hash40::new("throw_hi");
     let currentFrame = MotionModule::frame(fighter.module_accessor);
+    let speed_max = 1.25;
+    let accel = 0.01;
     
     WorkModule::enable_transition_term(fighter.module_accessor, *FIGHTER_STATUS_TRANSITION_TERM_ID_THROW_KIRBY_GROUND);
     if MotionModule::motion_kind(fighter.module_accessor) == throwB.hash{
         let maxFrame = 46.0;
-         // KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_GROUND_STOP);
-        // KineticModule::unable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_STOP);
         if currentFrame < 2.0 || currentFrame>=maxFrame {
             sv_kinetic_energy!(
                 reset_energy,
@@ -69,27 +69,25 @@ unsafe fn wario_throw_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
         }
         if currentFrame < maxFrame
         {
-            /* 
             sv_kinetic_energy!(
                 set_stable_speed,
                 fighter,
                 FIGHTER_KINETIC_ENERGY_ID_CONTROL,
-                vl::param_private::throw_b_speed_max,
+                speed_max,
                 0.0
             );
             sv_kinetic_energy!(
                 set_limit_speed,
                 fighter,
                 FIGHTER_KINETIC_ENERGY_ID_CONTROL,
-                vl::param_private::throw_b_speed_max,
+                speed_max,
                 0.0
             );
             sv_kinetic_energy!(
                 controller_set_accel_x_add,
                 fighter,
-                vl::param_private::throw_b_accel
+                accel
             );
-            */
         }
     }
     return false.into();
@@ -97,11 +95,11 @@ unsafe fn wario_throw_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
 
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW_KIRBY, condition = LUA_SCRIPT_STATUS_FUNC_STATUS_PRE)]
 unsafe fn wario_throwk_pre(fighter: &mut L2CFighterCommon) -> L2CValue {
-    return L2CFighterCommon::status_pre_ThrowKirby(fighter);
+    return fighter.status_pre_ThrowKirby();
 }
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW_KIRBY, condition = LUA_SCRIPT_STATUS_FUNC_INIT_STATUS)]
 unsafe fn wario_throwk_init(fighter: &mut L2CFighterCommon) -> L2CValue {
-    L2CFighterCommon::sub_status_uniq_process_ThrowKirby_initStatus(fighter);
+    fighter.sub_status_uniq_process_ThrowKirby_initStatus();
     let hitStop = 8;
     WorkModule::set_int(fighter.module_accessor, hitStop, *FIGHTER_STATUS_THROW_WORK_INT_STOP_FRAME);
 
@@ -109,48 +107,50 @@ unsafe fn wario_throwk_init(fighter: &mut L2CFighterCommon) -> L2CValue {
 }
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW_KIRBY, condition = LUA_SCRIPT_STATUS_FUNC_STATUS_MAIN)]
 unsafe fn wario_throwk_main(fighter: &mut L2CFighterCommon) -> L2CValue {
-    return L2CFighterCommon::status_ThrowKirby(fighter);
+    return fighter.status_ThrowKirby();
 }
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW_KIRBY, condition = LUA_SCRIPT_STATUS_FUNC_EXIT_STATUS)]
 unsafe fn wario_throwk_exit(fighter: &mut L2CFighterCommon) -> L2CValue {
-    return L2CFighterCommon::sub_status_uniq_process_ThrowKirby_exitStatus(fighter);
+    return fighter.sub_status_uniq_process_ThrowKirby_exitStatus();
 }
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW_KIRBY, condition = LUA_SCRIPT_STATUS_FUNC_STATUS_END)]
 unsafe fn wario_throwk_end(fighter: &mut L2CFighterCommon) -> L2CValue {
-    return L2CFighterCommon::status_end_ThrowKirby(fighter);
+    return fighter.status_end_ThrowKirby();
 }
 
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW_KIRBY, condition = LUA_SCRIPT_STATUS_FUNC_EXEC_STATUS)]
 unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
-    let frameRise=8.0;
-    let frameRiseStop=35.0;
-    let frameFallStart = acmd::throwDriver::FRAME_FALL;
-    let frameFallStartLoop = frameFallStart+1.0;
-    let frameLand = acmd::throwDriver::FRAME_LAND+1.0;
+    let FRAME_FALL = acmd::throwDriver::FRAME_FALL;
+    let FRAME_FALLLOOP = FRAME_FALL+2.0;
+    let FRAME_LAND = acmd::throwDriver::FRAME_LAND+1.0; //+1 due to set_frame offset
+
     let currentFrame = MotionModule::frame(fighter.module_accessor);
 
-    if (currentFrame > frameFallStart && currentFrame < frameFallStart+3.0)
-    {
-        KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_FALL);
-    }
-    else if (currentFrame >= frameFallStartLoop && currentFrame < frameLand)
+    //If we go past a certain frame, then freeze animation and accel downwards
+    if (currentFrame >= FRAME_FALLLOOP && currentFrame < FRAME_LAND)
     {
         MotionModule::set_rate(fighter.module_accessor, 0.0);
         let speed = smash::phx::Vector3f { x: 0.0, y: -0.375, z: 0.0 };
         KineticModule::add_speed(fighter.module_accessor, &speed);
     }
-
-    if GroundModule::is_touch(fighter.module_accessor, *GROUND_TOUCH_FLAG_DOWN as u32)
-    && currentFrame > frameFallStart
-    && currentFrame < frameLand
+    //Fall after a certain frame
+    else if (currentFrame > FRAME_FALL)
     {
-        MotionModule::set_frame_sync_anim_cmd(fighter.module_accessor, frameLand, true,true,false);
-        //MotionModule::set_frame(fighter.module_accessor, frameLand,false);
-        println!("Landed!");
-        MotionModule::set_rate(fighter.module_accessor, 1.0);
-        KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_MOTION);
-        GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND));
-        LinkModule::send_event_nodes_throw(fighter.module_accessor, Hash40::new("throw_sync_motion"), Hash40::new("invalid"), true, 0, 0, 0);
+        KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_FALL);
+    }
+
+    //Groundcast to see if we touched the ground (only after falling), then cut to the landing frame
+    if currentFrame > FRAME_FALL
+    && currentFrame < FRAME_LAND
+    {
+        if GroundModule::is_touch(fighter.module_accessor, *GROUND_TOUCH_FLAG_DOWN as u32)
+        {
+            MotionModule::set_frame_sync_anim_cmd(fighter.module_accessor, FRAME_LAND, true,true,false);
+            println!("Wario Landed!");
+            MotionModule::set_rate(fighter.module_accessor, 1.0);
+            KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_MOTION);
+            GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND));
+        }
     }
 
     return false.into();
@@ -174,7 +174,6 @@ unsafe fn wario_attack_air_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
         MotionModule::change_motion(fighter.module_accessor, dairRiseAnim, 18.0, 1.0, false, 0.0, false, false);
         macros::EFFECT_OFF_KIND(fighter, Hash40::new("sys_machstamp"),false,true);
         AttackModule::clear_all(fighter.module_accessor);
-        println!("Request bounce");
     }
     
     return false.into();

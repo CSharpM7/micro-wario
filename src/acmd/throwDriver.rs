@@ -32,7 +32,6 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
     if macros::is_excute(fighter) {
         WorkModule::on_flag(fighter.module_accessor, *FIGHTER_STATUS_THROW_FLAG_STOP);
         macros::CHECK_FINISH_CAMERA(fighter, 18, 4);
-        println!("ACMD 1");
     }
     wait(fighter.lua_state_agent, 1.0);
     if macros::is_excute(fighter) {
@@ -40,7 +39,6 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
         WorkModule::set_float(fighter.module_accessor, 5.0, *FIGHTER_INSTANCE_WORK_ID_FLOAT_FINISH_CAMERA_THROW_RAY_LENGTH);
         WorkModule::on_flag(fighter.module_accessor, *FIGHTER_INSTANCE_WORK_ID_FLAG_RAY_CHECK_FINISH_CAMERA_THROW);
         lua_bind::FighterCutInManager::set_throw_finish_zoom_rate(singletons::FighterCutInManager(), 1.5);
-        println!("ACMD 2");
     } 
     wait(fighter.lua_state_agent, 1.0);
     if is_excute(fighter) {
@@ -49,7 +47,6 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
         let target_no = WorkModule::get_int64(fighter.module_accessor, *FIGHTER_STATUS_THROW_WORK_INT_TARGET_HIT_NO);
         ATK_HIT_ABS(fighter, *FIGHTER_ATTACK_ABSOLUTE_KIND_THROW, Hash40::new("throw"), target, target_group, target_no);
         AttackModule::clear_all(fighter.module_accessor);
-        println!("ACMD 3");
     }
 }
 #[acmd_script( agent = "wario", script = "effect_throwhi", category = ACMD_EFFECT )]
