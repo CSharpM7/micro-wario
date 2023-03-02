@@ -124,19 +124,19 @@ unsafe fn wario_throwk_end(fighter: &mut L2CFighterCommon) -> L2CValue {
 unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     let frameRise=8.0;
     let frameRiseStop=35.0;
-    let frameFallStart = 48.0;
-    let frameFallStartLoop = 55.0;
-    let frameLand = acmd::throwDriver::FRAME_LAND;
+    let frameFallStart = acmd::throwDriver::FRAME_FALL;
+    let frameFallStartLoop = frameFallStart+1.0;
+    let frameLand = acmd::throwDriver::FRAME_LAND+1.0;
     let currentFrame = MotionModule::frame(fighter.module_accessor);
 
     if (currentFrame > frameFallStart && currentFrame < frameFallStart+3.0)
     {
         KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_FALL);
     }
-    else if (currentFrame > frameFallStartLoop && currentFrame < frameFallStartLoop+3.0)
+    else if (currentFrame >= frameFallStartLoop && currentFrame < frameLand)
     {
         MotionModule::set_rate(fighter.module_accessor, 0.0);
-        let speed = smash::phx::Vector3f { x: 0.0, y: -0.25, z: 0.0 };
+        let speed = smash::phx::Vector3f { x: 0.0, y: -0.375, z: 0.0 };
         KineticModule::add_speed(fighter.module_accessor, &speed);
     }
 
