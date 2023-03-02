@@ -51,8 +51,60 @@ unsafe fn get_grabbed_opponent_boma(attacker: *mut BattleObjectModuleAccessor) -
 mod acmd;
 mod status;
 
-#[skyline::main(name = "smashline_warioland")]
-pub fn main() {
+pub const THROW_F_STATUS_KIND: i32 = 0x45;
+pub const THROW_B_STATUS_KIND: i32 = 0x46;
+pub const THROW_HI_STATUS_KIND: i32 = 0x47;
+pub const THROW_LW_STATUS_KIND: i32 = 0x48;
+
+#[fighter_reset]
+fn agent_reset(fighter: &mut L2CFighterCommon) {
+    unsafe {
+        let fighter_kind = utility::get_kind(&mut *fighter.module_accessor);
+        if fighter_kind != *FIGHTER_KIND_WARIO {
+            return;
+        }
+        let driver=THROW_HI_STATUS_KIND;
+        fighter.global_table[driver].assign(&FIGHTER_STATUS_KIND_THROW_KIRBY.into());
+    }
+}
+std::arch::global_asm!(
+    r#"
+    .section .nro_header
+    .global __nro_header_start
+    .word 0
+    .word _mod_header
+    .word 0
+    .word 0
+    
+    .section .rodata.module_name
+        .word 0
+        .word 5
+        .ascii "warioland"
+    .section .rodata.mod0
+    .global _mod_header
+    _mod_header:
+        .ascii "MOD0"
+        .word __dynamic_start - _mod_header
+        .word __bss_start - _mod_header
+        .word __bss_end - _mod_header
+        .word __eh_frame_hdr_start - _mod_header
+        .word __eh_frame_hdr_end - _mod_header
+        .word __nx_module_runtime - _mod_header // runtime-generated module object offset
+    .global IS_NRO
+    IS_NRO:
+        .word 1
+    
+    .section .bss.module_runtime
+    __nx_module_runtime:
+    .space 0xD0
+    "#
+);
+
+#[no_mangle]
+pub extern "C" fn main() {
     acmd::install();
     status::install();
+    install_agent_resets!(
+        agent_reset
+    );
 }

@@ -1,6 +1,6 @@
 use super::*;
 
-#[acmd_script( agent = "wario", script = "game_throwf", category = ACMD_GAME, low_priority )]
+#[acmd_script( agent = "wario", script = "game_throwf", category = ACMD_GAME )]
 unsafe fn game_throwf(fighter: &mut L2CAgentBase) {
     if macros::is_excute(fighter) {
         macros::ATTACK_ABS(fighter, *FIGHTER_ATTACK_ABSOLUTE_KIND_THROW, 0, 8.0, 45, 70, 0, 60, 0.0, 1.0, *ATTACK_LR_CHECK_F, 0.0, true, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_NONE, *ATTACK_REGION_THROW);
@@ -22,7 +22,7 @@ unsafe fn game_throwf(fighter: &mut L2CAgentBase) {
         AttackModule::clear_all(fighter.module_accessor);
     }
 }
-#[acmd_script( agent = "wario", script = "effect_throwf", category = ACMD_EFFECT, low_priority )]
+#[acmd_script( agent = "wario", script = "effect_throwf", category = ACMD_EFFECT )]
 unsafe fn effect_throwf(fighter: &mut L2CAgentBase) {
     frame(fighter.lua_state_agent, 19.0);
     if macros::is_excute(fighter) {
@@ -33,7 +33,7 @@ unsafe fn effect_throwf(fighter: &mut L2CAgentBase) {
         macros::EFFECT(fighter, Hash40::new("sys_smash_flash_s"), Hash40::new("top"), 0, 14, 13, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, true);
     }
 }
-#[acmd_script( agent = "wario", script = "sound_throwf", category = ACMD_SOUND, low_priority )]
+#[acmd_script( agent = "wario", script = "sound_throwf", category = ACMD_SOUND )]
 unsafe fn sound_throwf(fighter: &mut L2CAgentBase) {
     frame(fighter.lua_state_agent, 2.0);
     if macros::is_excute(fighter) {
@@ -45,7 +45,7 @@ unsafe fn sound_throwf(fighter: &mut L2CAgentBase) {
         macros::PLAY_SEQUENCE(fighter, Hash40::new("seq_wario_rnd_attack"));
     }
 }
-#[acmd_script( agent = "wario", script = "expression_throwf", category = ACMD_EXPRESSION, low_priority )]
+#[acmd_script( agent = "wario", script = "expression_throwf", category = ACMD_EXPRESSION )]
 unsafe fn expression_throwf(fighter: &mut L2CAgentBase) {
     if macros::is_excute(fighter) {
         slope!(fighter, *MA_MSC_CMD_SLOPE_SLOPE_INTP, *SLOPE_STATUS_LR, 4);

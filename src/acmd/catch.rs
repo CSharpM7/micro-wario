@@ -20,7 +20,7 @@ unsafe fn game_catchattack(fighter: &mut L2CAgentBase) {
         AttackModule::clear_all(fighter.module_accessor);
     }
 }
-#[acmd_script( agent = "wario", script = "effect_catchattack", category = ACMD_EFFECT, low_priority )]
+#[acmd_script( agent = "wario", script = "effect_catchattack", category = ACMD_EFFECT )]
 unsafe fn effect_catchattack(fighter: &mut L2CAgentBase) {
     if macros::is_excute(fighter) {
         EFFECT_FOLLOW_NO_STOP(fighter, Hash40::new("sys_attack_speedline"), Hash40::new("top"), 0.0, 7.25, 11.0, 260, 0, 0, 1.1, true);
