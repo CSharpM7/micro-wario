@@ -2,9 +2,13 @@ use super::*;
 pub const FRAME_FALL: f32 = 50.0;
 pub const FRAME_LAND: f32 = 55.0;
 pub const FRAME_THROW: f32 = 58.0;
+pub static mut THROWHI_HEAVY:[bool;8] = [false; 8];
+
+
 
 #[acmd_script( agent = "wario", script = "game_throwhi", category = ACMD_GAME )]
 unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
+    let entry = get_entry(fighter) as usize;
     if is_excute(fighter) {
         macros::FT_LEAVE_NEAR_OTTOTTO(fighter, -2, 3);
 
@@ -33,16 +37,20 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
 
     let factorSize = (if extraLarge {1.5} else {1.0})*opponentScale.max(1.0);
     let factorPower = if extraLarge || extraHeavy {1.2} else {1.0};
+    //Add rate based on item status
     let mut addRate = 0.0;
     if opponentScale != PostureModule::scale(fighter.module_accessor)
     {
         addRate = if {opponentScale > PostureModule::scale(fighter.module_accessor)} {0.25} else {-0.25};
     }
+    let leadHead = WorkModule::is_flag(opponent, *FIGHTER_INSTANCE_WORK_ID_FLAG_METAL)
+    || WorkModule::is_flag(opponent, *FIGHTER_INSTANCE_WORK_ID_FLAG_GOLD);
+    if leadHead {addRate += 0.375};
     
     let factorRate = (if extraLarge || extraHeavy {1.375} else {1.0})+addRate;
 
-    println!("ExtraLarge: {} ExtraHeavy: {} Weight: {}",extraLarge,extraHeavy,weight);
-
+    println!("ExtraLarge: {} ExtraHeavy: {} Added Rate: {}",extraLarge,extraHeavy,addRate);
+    THROWHI_HEAVY[entry] = extraLarge || extraHeavy;
 
     frame(fighter.lua_state_agent, 8.0);
     FT_MOTION_RATE(fighter, factorRate);
@@ -64,7 +72,7 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
 
     frame(fighter.lua_state_agent, FRAME_FALL);
     if macros::is_excute(fighter) {
-        macros::ATTACK_IGNORE_THROW(fighter, 0, 0, Hash40::new("rot"), 10.0*factorPower, 270, 90, 0, 15, 4.75*factorSize, 0.0, 0.0, 0.0, Some(0.0), Some(0.5), Some(0.0), 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_A, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
+        macros::ATTACK_IGNORE_THROW(fighter, 0, 0, Hash40::new("rot"), 10.0*factorPower, 270, 90, 0, 15, 4.75*factorSize, 0.0, 0.0, 0.0, Some(0.0), Some(0.5), Some(0.0), 1.2, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_A, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
         macros::ATTACK_IGNORE_THROW(fighter, 1, 0, Hash40::new("rot"), 8.0*factorPower, 50, 70, 0, 100, 6.0*factorSize, 0.0, 0.0, 0.0, Some(0.0), Some(2.5), Some(0.0), 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
     }
     wait(fighter.lua_state_agent, 2.0);
@@ -76,7 +84,9 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
     if macros::is_excute(fighter) {
         AttackModule::clear_all(fighter.module_accessor);
         
-        macros::ATTACK_IGNORE_THROW(fighter, 0, 0, Hash40::new("rot"), 7.0, 65, 95, 0, 85, 8.25*factorSize, 0.0, 0.0, 0.0, None,None,None, 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
+        macros::ATTACK_IGNORE_THROW(fighter, 0, 0, Hash40::new("top"), 10.0*factorPower, 270, 90, 0, 15, 2.5*factorSize, 0.0, 0.0, -3.5, Some(0.0), Some(0.0), Some(3.5), 1.2, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_A, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
+
+        macros::ATTACK_IGNORE_THROW(fighter, 1, 0, Hash40::new("rot"), 7.0, 65, 95, 0, 85, 8.25*factorSize, 0.0, 0.0, 0.0, None,None,None, 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
         AttackModule::set_catch_only_all(fighter.module_accessor, true, false);
 
         WorkModule::on_flag(fighter.module_accessor, *FIGHTER_STATUS_THROW_FLAG_STOP);
@@ -104,6 +114,10 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
 }
 #[acmd_script( agent = "wario", script = "effect_throwhi", category = ACMD_EFFECT )]
 unsafe fn effect_throwhi(fighter: &mut L2CAgentBase) {
+    let entry = get_entry(fighter) as usize;
+    let opponent = get_grabbed_opponent_boma(fighter.module_accessor);
+    let opponentScale = PostureModule::scale(opponent);
+
     frame(fighter.lua_state_agent, 10.0);
     if macros::is_excute(fighter) {
         macros::LANDING_EFFECT_FLIP(fighter, Hash40::new("sys_landing_smoke"), Hash40::new("sys_landing_smoke"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, 0.7, 0, 0, 0, 0, 0, 0, false, *EF_FLIP_YZ);
@@ -138,15 +152,30 @@ unsafe fn effect_throwhi(fighter: &mut L2CAgentBase) {
     }
 
 
-    frame(fighter.lua_state_agent, FRAME_LAND-1.0);
+    frame(fighter.lua_state_agent, FRAME_LAND-2.0);
+    if macros::is_excute(fighter) {
+        if THROWHI_HEAVY[entry]
+        && opponentScale >= 1.0 { 
+            macros::EFFECT_FOLLOW(fighter, Hash40::new("sys_merikomi"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, (opponentScale+0.4), true);
+        }
+    }
+    wait(fighter.lua_state_agent, 1.0);
     if macros::is_excute(fighter) {
         macros::LANDING_EFFECT(fighter, Hash40::new("sys_down_smoke"), Hash40::new("top"), 0, 0, -3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
         macros::LAST_EFFECT_SET_RATE(fighter, 0.8);
         macros::EFFECT(fighter, Hash40::new("sys_crown"), Hash40::new("top"), 0, 0, -3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
     }
+    /* 
+    wait(fighter.lua_state_agent, 4.0);
+    if macros::is_excute(fighter) {
+        macros::EFFECT_OFF_KIND(fighter, Hash40::new("sys_merikomi"),false,true);
+    }*/
 }
 #[acmd_script( agent = "wario", script = "sound_throwhi", category = ACMD_SOUND )]
 unsafe fn sound_throwhi(fighter: &mut L2CAgentBase) {
+    let entry = get_entry(fighter) as usize;
+    let opponent = get_grabbed_opponent_boma(fighter.module_accessor);
+    let opponentScale = PostureModule::scale(opponent);
     
     frame(fighter.lua_state_agent, 2.0);
     if macros::is_excute(fighter) {
@@ -181,6 +210,10 @@ unsafe fn sound_throwhi(fighter: &mut L2CAgentBase) {
 
 #[acmd_script( agent = "wario", script = "expression_throwhi", category = ACMD_EXPRESSION )]
 unsafe fn expression_throwhi(fighter: &mut L2CAgentBase) {
+    let entry = get_entry(fighter) as usize;
+    let opponent = get_grabbed_opponent_boma(fighter.module_accessor);
+    let opponentScale = PostureModule::scale(opponent);
+
     if macros::is_excute(fighter) {
         slope!(fighter, *MA_MSC_CMD_SLOPE_SLOPE_INTP, *SLOPE_STATUS_L, 13);
     }
@@ -203,8 +236,11 @@ unsafe fn expression_throwhi(fighter: &mut L2CAgentBase) {
     }
     frame(fighter.lua_state_agent, FRAME_LAND);
     if macros::is_excute(fighter) {
-        macros::QUAKE(fighter, *CAMERA_QUAKE_KIND_L);
-        macros::RUMBLE_HIT(fighter, Hash40::new("rbkind_attackl"), 0);
+        let mut quakeKind = if THROWHI_HEAVY[entry] {*CAMERA_QUAKE_KIND_XL} else {*CAMERA_QUAKE_KIND_L};   
+        if opponentScale < 1.0 {quakeKind = *CAMERA_QUAKE_KIND_M};
+        let rumbleKind = if THROWHI_HEAVY[entry] {"rbkind_explosion"} else {"rbkind_attackl"};   
+        macros::QUAKE(fighter, quakeKind);
+        macros::RUMBLE_HIT(fighter, Hash40::new(rumbleKind), 0);
         slope!(fighter, *MA_MSC_CMD_SLOPE_SLOPE_INTP, *SLOPE_STATUS_LR, 4);
     }
 }

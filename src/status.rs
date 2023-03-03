@@ -116,11 +116,13 @@ unsafe fn wario_throwk_exit(fighter: &mut L2CFighterCommon) -> L2CValue {
     WorkModule::enable_transition_term(fighter.module_accessor, *FIGHTER_STATUS_TRANSITION_TERM_ID_CONT_ITEM_PICKUP_HEAVY);
     return false.into();
     */
+    macros::EFFECT_OFF_KIND(fighter, Hash40::new("sys_merikomi"),false,true);
     return fighter.sub_status_uniq_process_ThrowKirby_exitStatus();
 }
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW_KIRBY, condition = LUA_SCRIPT_STATUS_FUNC_STATUS_END)]
 unsafe fn wario_throwk_end(fighter: &mut L2CFighterCommon) -> L2CValue {
     //StatusModule::change_status_force(fighter.module_accessor, *FIGHTER_STATUS_KIND_WAIT, false);
+    macros::EFFECT_OFF_KIND(fighter, Hash40::new("sys_merikomi"),false,true);
     return fighter.status_end_ThrowKirby();
 }
 
