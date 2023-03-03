@@ -4432,7 +4432,7 @@ list:
     flags:
       turn: false
       loop: false
-      move: true
+      move: false
       fix_trans: false
       fix_rot: false
       fix_scale: false

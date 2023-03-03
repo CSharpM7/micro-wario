@@ -111,10 +111,16 @@ unsafe fn wario_throwk_main(fighter: &mut L2CFighterCommon) -> L2CValue {
 }
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW_KIRBY, condition = LUA_SCRIPT_STATUS_FUNC_EXIT_STATUS)]
 unsafe fn wario_throwk_exit(fighter: &mut L2CFighterCommon) -> L2CValue {
+    //This cant be right...
+    /*
+    WorkModule::enable_transition_term(fighter.module_accessor, *FIGHTER_STATUS_TRANSITION_TERM_ID_CONT_ITEM_PICKUP_HEAVY);
+    return false.into();
+    */
     return fighter.sub_status_uniq_process_ThrowKirby_exitStatus();
 }
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW_KIRBY, condition = LUA_SCRIPT_STATUS_FUNC_STATUS_END)]
 unsafe fn wario_throwk_end(fighter: &mut L2CFighterCommon) -> L2CValue {
+    //StatusModule::change_status_force(fighter.module_accessor, *FIGHTER_STATUS_KIND_WAIT, false);
     return fighter.status_end_ThrowKirby();
 }
 
@@ -125,6 +131,12 @@ unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     let FRAME_LAND = acmd::throwDriver::FRAME_LAND+1.0; //+1 due to set_frame offset
 
     let currentFrame = MotionModule::frame(fighter.module_accessor);
+    if currentFrame >= FRAME_LAND {
+        if MotionModule::end_frame(fighter.module_accessor) - currentFrame <= 3.0 { 
+            fighter.change_status(FIGHTER_STATUS_KIND_WAIT.into(), false.into());
+        }
+        return false.into();
+    }
 
     //If we go past a certain frame, then freeze animation and accel downwards
     if (currentFrame >= FRAME_FALLLOOP && currentFrame < FRAME_LAND)
@@ -133,15 +145,14 @@ unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
         let speed = smash::phx::Vector3f { x: 0.0, y: -0.375, z: 0.0 };
         KineticModule::add_speed(fighter.module_accessor, &speed);
     }
-    //Fall after a certain frame
-    else if (currentFrame > FRAME_FALL)
-    {
-        KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_FALL);
+    else if currentFrame > FRAME_FALL {
+        if (currentFrame <2.0 + FRAME_FALL) {println!("FALL");}
+        //Enabling this lets you move during the attack
+        //KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_FALL);
     }
 
     //Groundcast to see if we touched the ground (only after falling), then cut to the landing frame
-    if currentFrame > FRAME_FALL
-    && currentFrame < FRAME_LAND
+    if currentFrame >= FRAME_FALL
     {
         if GroundModule::is_touch(fighter.module_accessor, *GROUND_TOUCH_FLAG_DOWN as u32)
         {
