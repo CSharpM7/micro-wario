@@ -130,7 +130,7 @@ unsafe fn wario_throwk_end(fighter: &mut L2CFighterCommon) -> L2CValue {
 unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     let FRAME_FALL = acmd::throwDriver::FRAME_FALL;
     let FRAME_FALLLOOP = FRAME_FALL+2.0;
-    let FRAME_LAND = acmd::throwDriver::FRAME_LAND+1.0; //+1 due to set_frame offset
+    let FRAME_LAND = acmd::throwDriver::FRAME_LAND; //+1 due to set_frame offset
 
     let currentFrame = MotionModule::frame(fighter.module_accessor);
     if currentFrame >= FRAME_LAND {
