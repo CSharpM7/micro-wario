@@ -171,6 +171,14 @@ unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
             MotionModule::set_rate(fighter.module_accessor, 1.0);
             //GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND));
             KineticModule::resume_energy(fighter.module_accessor,*FIGHTER_KINETIC_ENERGY_ID_CONTROL);
+            
+            let entry = get_entry(fighter) as usize;
+            let opponent = get_grabbed_opponent_boma(fighter.module_accessor);
+            let opponentScale = PostureModule::scale(opponent);
+            if acmd::throwDriver::THROWHI_HEAVY[entry]
+            && opponentScale >= 1.0 { 
+                macros::EFFECT_FOLLOW(fighter, Hash40::new("sys_merikomi"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, (opponentScale+0.4), true);
+            }
         }
     }
 
