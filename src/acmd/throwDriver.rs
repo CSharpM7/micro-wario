@@ -33,7 +33,7 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
 
     let factorSize = if extraLarge {1.5} else {1.0};
     let factorPower = if extraLarge || extraHeavy {1.2} else {1.0};
-    let factorRate = if extraLarge || extraHeavy {0.75} else {1.0};
+    let factorRate = if extraLarge || extraHeavy {1.375} else {1.0};
 
     println!("ExtraLarge: {} ExtraHeavy: {} Weight: {}",extraLarge,extraHeavy,weight);
 
@@ -53,11 +53,13 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
     if macros::is_excute(fighter) {
         AttackModule::clear_all(fighter.module_accessor);
     }
-    frame(fighter.lua_state_agent, FRAME_FALL);
+    wait(fighter.lua_state_agent, 2.0);
     FT_MOTION_RATE(fighter, 1.0);
+    
+    frame(fighter.lua_state_agent, FRAME_FALL);
     if macros::is_excute(fighter) {
         macros::ATTACK_IGNORE_THROW(fighter, 0, 0, Hash40::new("rot"), 10.0*factorPower, 270, 90, 0, 15, 5.0*factorSize, 0.0, 0.0, 0.0, None,None,None, 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_A, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
-        macros::ATTACK_IGNORE_THROW(fighter, 1, 0, Hash40::new("rot"), 8.0*factorPower, 50, 70, 0, 100, 7.0*factorSize, 0.0, 2.0, 0.0, None,None,None, 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
+        macros::ATTACK_IGNORE_THROW(fighter, 1, 0, Hash40::new("rot"), 8.0*factorPower, 50, 70, 0, 100, 7.0*factorSize, 0.0, 1.0, 0.0, None,None,None, 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
     }
     wait(fighter.lua_state_agent, 2.0);
     if macros::is_excute(fighter) {
@@ -129,9 +131,8 @@ unsafe fn effect_throwhi(fighter: &mut L2CAgentBase) {
     }
 
 
-    frame(fighter.lua_state_agent, FRAME_LAND);
+    frame(fighter.lua_state_agent, FRAME_LAND-1.0);
     if macros::is_excute(fighter) {
-        macros::EFFECT(fighter, Hash40::new("sys_attack_speedline"), Hash40::new("top"), 0, 10, 0, -90, 0, 0, 1.1, 0, 1, 0, 0, 0, 0, true);
         macros::LANDING_EFFECT(fighter, Hash40::new("sys_down_smoke"), Hash40::new("top"), 0, 0, -3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
         macros::LAST_EFFECT_SET_RATE(fighter, 0.8);
         macros::EFFECT(fighter, Hash40::new("sys_crown"), Hash40::new("top"), 0, 0, -3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
