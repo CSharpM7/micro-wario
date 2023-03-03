@@ -132,8 +132,16 @@ unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
 
     let currentFrame = MotionModule::frame(fighter.module_accessor);
     if currentFrame >= FRAME_LAND {
-        if MotionModule::end_frame(fighter.module_accessor) - currentFrame <= 3.0 { 
-            fighter.change_status(FIGHTER_STATUS_KIND_WAIT.into(), false.into());
+        let grounded = GroundModule::is_touch(fighter.module_accessor, *GROUND_TOUCH_FLAG_DOWN as u32);
+        let status = if grounded {FIGHTER_STATUS_KIND_WAIT} else {FIGHTER_STATUS_KIND_FALL};
+        let lastFrame = if grounded {MotionModule::end_frame(fighter.module_accessor)-3.0} else {MotionModule::end_frame(fighter.module_accessor)-9.0};
+        
+        if currentFrame >= lastFrame { 
+            if !grounded{
+                let speed = smash::phx::Vector3f { x: 0.0, y: -2.0, z: 0.0 };
+                KineticModule::add_speed(fighter.module_accessor, &speed);
+            }
+            fighter.change_status(status.into(), false.into());
         }
         return false.into();
     }
@@ -147,8 +155,8 @@ unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     }
     else if currentFrame > FRAME_FALL {
         if (currentFrame <2.0 + FRAME_FALL) {println!("FALL");}
-        //Enabling this lets you move during the attack
-        //KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_FALL);
+        KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_FALL);
+        KineticModule::suspend_energy(fighter.module_accessor,*FIGHTER_KINETIC_ENERGY_ID_CONTROL);
     }
 
     //Groundcast to see if we touched the ground (only after falling), then cut to the landing frame
@@ -159,8 +167,8 @@ unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
             MotionModule::set_frame_sync_anim_cmd(fighter.module_accessor, FRAME_LAND, true,true,false);
             println!("Wario Landed!");
             MotionModule::set_rate(fighter.module_accessor, 1.0);
-            KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_MOTION);
-            GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND));
+            //GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND));
+            KineticModule::resume_energy(fighter.module_accessor,*FIGHTER_KINETIC_ENERGY_ID_CONTROL);
         }
     }
 

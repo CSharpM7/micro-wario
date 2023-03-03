@@ -6,19 +6,47 @@ pub const FRAME_THROW: f32 = 58.0;
 #[acmd_script( agent = "wario", script = "game_throwhi", category = ACMD_GAME )]
 unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
     if is_excute(fighter) {
-        macros::FT_LEAVE_NEAR_OTTOTTO(fighter, -2.5, 2.5);
+        macros::FT_LEAVE_NEAR_OTTOTTO(fighter, -2, 3);
 
         ATTACK_ABS(fighter, *FIGHTER_ATTACK_ABSOLUTE_KIND_THROW, 0, 10.0, 80, 28, 0, 80, 0.0, 1.0, *ATTACK_LR_CHECK_F, 0.0, true, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_NONE, *ATTACK_REGION_THROW);
         ATTACK_ABS(fighter, *FIGHTER_ATTACK_ABSOLUTE_KIND_CATCH, 0, 3.0, 361, 100, 0, 60, 0.0, 1.0, *ATTACK_LR_CHECK_F, 0.0, true, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_NONE, *ATTACK_REGION_THROW);
     }
+    //Affect hitbox size based on scale
+    let opponent = get_grabbed_opponent_boma(fighter.module_accessor);
+    let opponentScale = PostureModule::scale(opponent);
+    let weight =  WorkModule::get_param_float(opponent, hash40("weight"), 0);
+    let opponent_kind = utility::get_kind(&mut *opponent);
+    //Factor in mini and megashroom
+    let extraLarge = opponentScale > 0.5
+    && (opponentScale > 1.5 || [
+        *FIGHTER_KIND_KOOPA,
+        *FIGHTER_KIND_KROOL,
+        *FIGHTER_KIND_DONKEY,
+        *FIGHTER_KIND_DEDEDE,
+        *FIGHTER_KIND_GANON,
+        *FIGHTER_KIND_LIZARDON,
+        *FIGHTER_KIND_RIDLEY,
+        *FIGHTER_KIND_ROBOT,
+        *FIGHTER_KIND_ROSETTA //sorry about this one
+    ].contains(&opponent_kind)); 
+    let extraHeavy = weight>110.0;
+
+    let factorSize = if extraLarge {1.5} else {1.0};
+    let factorPower = if extraLarge || extraHeavy {1.2} else {1.0};
+    let factorRate = if extraLarge || extraHeavy {0.75} else {1.0};
+
+    println!("ExtraLarge: {} ExtraHeavy: {} Weight: {}",extraLarge,extraHeavy,weight);
+
+
     frame(fighter.lua_state_agent, 8.0);
+    FT_MOTION_RATE(fighter, factorRate);
     if macros::is_excute(fighter) {
         WorkModule::on_flag(fighter.module_accessor, *FIGHTER_STATUS_THROW_FLAG_START_AIR);
     }
     //Going up//
     frame(fighter.lua_state_agent, 15.0);
     if macros::is_excute(fighter) {
-        macros::ATTACK_IGNORE_THROW(fighter, 0, 0, Hash40::new("bust"), 8.0, 50, 70, 0, 100, 6.0, -6.0, 8.5, -1.0, Some(4.0), Some(8.5), Some(-1.5), 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
+        macros::ATTACK_IGNORE_THROW(fighter, 0, 0, Hash40::new("throw"), 8.0, 50, 70, 0, 100, 5.5*factorSize, 0.0, -5.5, 0.0, Some(0.0), Some(1.5), Some(0.0), 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
     }
 
     frame(fighter.lua_state_agent, 38.0);
@@ -26,9 +54,10 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
         AttackModule::clear_all(fighter.module_accessor);
     }
     frame(fighter.lua_state_agent, FRAME_FALL);
+    FT_MOTION_RATE(fighter, 1.0);
     if macros::is_excute(fighter) {
-        macros::ATTACK_IGNORE_THROW(fighter, 0, 0, Hash40::new("rot"), 10.0, 270, 95, 0, 15, 4.5, 0.0, 0.0, 0.0, None,None,None, 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
-        macros::ATTACK_IGNORE_THROW(fighter, 1, 0, Hash40::new("rot"), 8.0, 50, 70, 0, 100, 6.25, 0.0, 2.0, 0.0, None,None,None, 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
+        macros::ATTACK_IGNORE_THROW(fighter, 0, 0, Hash40::new("rot"), 10.0*factorPower, 270, 90, 0, 15, 5.0*factorSize, 0.0, 0.0, 0.0, None,None,None, 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_A, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
+        macros::ATTACK_IGNORE_THROW(fighter, 1, 0, Hash40::new("rot"), 8.0*factorPower, 50, 70, 0, 100, 7.0*factorSize, 0.0, 2.0, 0.0, None,None,None, 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
     }
     wait(fighter.lua_state_agent, 2.0);
     if macros::is_excute(fighter) {
@@ -37,18 +66,23 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
     
     frame(fighter.lua_state_agent, FRAME_LAND+1.0);
     if macros::is_excute(fighter) {
+        AttackModule::clear_all(fighter.module_accessor);
+        
+        macros::ATTACK_IGNORE_THROW(fighter, 0, 0, Hash40::new("rot"), 7.0, 65, 95, 0, 85, 9.0, 0.0, 0.0, 0.0, None,None,None, 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
+        AttackModule::set_catch_only_all(fighter.module_accessor, true, false);
+
         WorkModule::on_flag(fighter.module_accessor, *FIGHTER_STATUS_THROW_FLAG_STOP);
         macros::CHECK_FINISH_CAMERA(fighter, 18, 4);
     }
     wait(fighter.lua_state_agent, 1.0);
     if macros::is_excute(fighter) {
-        AttackModule::clear_all(fighter.module_accessor);
         WorkModule::set_float(fighter.module_accessor, 5.0, *FIGHTER_INSTANCE_WORK_ID_FLOAT_FINISH_CAMERA_THROW_RAY_LENGTH);
         WorkModule::on_flag(fighter.module_accessor, *FIGHTER_INSTANCE_WORK_ID_FLAG_RAY_CHECK_FINISH_CAMERA_THROW);
         lua_bind::FighterCutInManager::set_throw_finish_zoom_rate(singletons::FighterCutInManager(), 1.5);
     } 
     wait(fighter.lua_state_agent, 1.0);
     if is_excute(fighter) {
+        AttackModule::clear_all(fighter.module_accessor);
         let target = WorkModule::get_int64(fighter.module_accessor, *FIGHTER_STATUS_THROW_WORK_INT_TARGET_OBJECT);
         let target_group = WorkModule::get_int64(fighter.module_accessor, *FIGHTER_STATUS_THROW_WORK_INT_TARGET_HIT_GROUP);
         let target_no = WorkModule::get_int64(fighter.module_accessor, *FIGHTER_STATUS_THROW_WORK_INT_TARGET_HIT_NO);
