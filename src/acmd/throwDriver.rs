@@ -154,12 +154,6 @@ unsafe fn effect_throwhi(fighter: &mut L2CAgentBase) {
 
     frame(fighter.lua_state_agent, FRAME_LAND-1.0);
     if macros::is_excute(fighter) {
-        if THROWHI_HEAVY[entry]
-        && opponentScale >= 1.0 { 
-            macros::EFFECT_FOLLOW(fighter, Hash40::new("sys_merikomi"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, (opponentScale+0.4), true);
-        }
-    }
-    if macros::is_excute(fighter) {
         macros::LANDING_EFFECT(fighter, Hash40::new("sys_down_smoke"), Hash40::new("top"), 0, 0, -3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
         macros::LAST_EFFECT_SET_RATE(fighter, 0.8);
         macros::EFFECT(fighter, Hash40::new("sys_crown"), Hash40::new("top"), 0, 0, -3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
