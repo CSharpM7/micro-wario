@@ -39,57 +39,13 @@ use smashline::*;
 #[macro_use]
 extern crate lazy_static;
 
-
-#[skyline::from_offset(0x3ac540)]
-pub fn get_battle_object_from_id(id: u32) -> *mut BattleObject;
-
-unsafe fn get_grabbed_opponent_boma(attacker: *mut BattleObjectModuleAccessor) -> &'static mut BattleObjectModuleAccessor {
-    let opponent_id = LinkModule::get_node_object_id(attacker, *LINK_NO_CAPTURE) as u32;
-    let opponent_object = get_battle_object_from_id(opponent_id);
-    return &mut *(*opponent_object).module_accessor
-}
-pub unsafe fn get_entry_from_boma(boma: *mut BattleObjectModuleAccessor) -> u32 {
-    return WorkModule::get_int(boma, *FIGHTER_INSTANCE_WORK_ID_INT_ENTRY_ID) as u32
-}
-pub unsafe fn get_entry(fighter: &mut L2CAgentBase) -> u32 {
-    return get_entry_from_boma(fighter.module_accessor);
-}
-
-
-
-
 mod acmd;
 mod status;
-mod data;
-
-pub const THROW_F_STATUS_KIND: i32 = 0x45;
-pub const THROW_B_STATUS_KIND: i32 = 0x46;
-pub const THROW_HI_STATUS_KIND: i32 = 0x47;
-pub const THROW_LW_STATUS_KIND: i32 = 0x48;
-
-unsafe fn agent_start(fighter: &mut L2CFighterCommon)
-{
-    let fighter_kind = utility::get_kind(&mut *fighter.module_accessor);
-    if fighter_kind != *FIGHTER_KIND_WARIO {
-        return;
-    }
-    let driver=THROW_HI_STATUS_KIND;
-    fighter.global_table[driver].assign(&FIGHTER_STATUS_KIND_THROW_KIRBY.into());
-}
-
-#[smashline::fighter_init]
-fn agent_init(fighter: &mut L2CFighterCommon) {
-    unsafe {
-        agent_start(fighter);
-    }
-}
-#[fighter_reset]
-fn agent_reset(fighter: &mut L2CFighterCommon) {
-    unsafe {
-        agent_start(fighter);
-    }
-}
-
+mod agent;
+pub mod data;
+pub mod util;
+use util::*;
+use data::gamemodes::*;
 
 std::arch::global_asm!(
     r#"
@@ -127,13 +83,9 @@ std::arch::global_asm!(
 pub extern "C" fn main() {
     println!("[smashline_wario::main] Loading...");
     data::install();
+    data::gamemodes::set_gamemode();
     acmd::install();
     status::install();
-    smashline::install_agent_init_callbacks!(
-        agent_init
-    );
-    install_agent_resets!(
-        agent_reset
-    );
+    agent::install();
     println!("[smashline_wario::main] HERE I GO!");
 }

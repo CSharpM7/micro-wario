@@ -1,3 +1,5 @@
+use crate::data::gamemodes::is_ULTS;
+
 mod bair;
 mod dair;
 mod catch;
@@ -12,4 +14,10 @@ pub fn install() {
     throwF::install();
     throwDriver::install();
     throwLw::install();
+
+    unsafe{
+        if !is_ULTS(){
+            //this is where downsmash goes
+        }
+    }
 }
