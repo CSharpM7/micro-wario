@@ -9,8 +9,12 @@ use std::{
     thread::{self}
 };
 
-
 const IDENTIFIER: &str = "smashline_wario";
+
+use std::sync::RwLock;
+lazy_static! {
+    static ref MOD_DIR: RwLock<String> = RwLock::new("".to_string());
+}
 
 
 fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> io::Result<()> {
@@ -29,11 +33,10 @@ fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> io::Result<()> 
     Ok(())
 }
 
-pub fn patch_files(MOD_DIR: &str)
+pub fn patch_files()
 {
     unsafe {
-        let modFolderString = MOD_DIR;
-        let motionFolder = format!("{}/fighter/wario/motion/body",MOD_DIR);
+        let motionFolder = format!("{}/fighter/wario/motion/body",&*MOD_DIR.read().unwrap());
         let slots=8;
         if !Path::new(motionFolder.as_str()).exists()
         {
@@ -54,7 +57,8 @@ pub fn patch_files(MOD_DIR: &str)
     }
     
 }
-pub fn inital_setup() {
+
+pub fn inital_setup()->bool {
     let mut found_folder = false;
 
     unsafe {
@@ -66,20 +70,20 @@ pub fn inital_setup() {
                 if Path::new(&path).exists() {
                     found_folder = true;
                     path.pop();
-                    let dir = format!("{}", path.display());
-                    patch_files(dir.as_str());
+                    *MOD_DIR.write().unwrap() = format!("{}", path.display());
                     break;
                 }
             }
         }
     }
+    return found_folder;
 }
 
 
 pub fn install() {
-    if true{
+    if inital_setup() {
         let install_thread = std::thread::spawn(move || {
-            inital_setup();
+            patch_files();
         });
         install_thread.join();
     }
