@@ -47,8 +47,8 @@ unsafe fn wario_throw_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     let throwB = Hash40::new("throw_b");
     let throwDriver = Hash40::new("throw_hi");
     let currentFrame = MotionModule::frame(fighter.module_accessor);
-    let speed_max = 1.25;
-    let accel = 0.01;
+    let speed_max = 0.75;
+    let accel = 0.0075;
     
     WorkModule::enable_transition_term(fighter.module_accessor, *FIGHTER_STATUS_TRANSITION_TERM_ID_THROW_KIRBY_GROUND);
     if MotionModule::motion_kind(fighter.module_accessor) == throwB.hash{
