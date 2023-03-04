@@ -1,0 +1,10 @@
+display_name="Old Bear, New Tricks"
+description="""
+Moveset Edit. Requires Smashline_Hook and NRO_Hook
+A complete overhaul for Banjo! 
+Changelog:
+https://github.com/CSharpM7/banjo-moveset
+"""
+version="1"
+category="Param"
+authors="C#"

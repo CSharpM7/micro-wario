@@ -140,7 +140,7 @@ unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
         
         if currentFrame >= lastFrame { 
             if !grounded{
-                let speed = smash::phx::Vector3f { x: 0.0, y: -0.375, z: 0.0 };
+                let speed = smash::phx::Vector3f { x: 0.0, y: -0.1, z: 0.0 };
                 KineticModule::add_speed(fighter.module_accessor, &speed);
             }
             fighter.change_status(status.into(), false.into());

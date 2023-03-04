@@ -1,4 +1,4 @@
-use super::*;
+use super::super::*;
 pub const FRAME_FALL: f32 = 50.0;
 pub const FRAME_LAND: f32 = 55.0;
 pub const FRAME_THROW: f32 = 58.0;

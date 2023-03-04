@@ -1,4 +1,4 @@
-use super::*;
+use super::super::*;
 pub const FRAME_FALL: f32 = 15.0;
 
 #[acmd_script( agent = "wario", script = "game_attackairlw", category = ACMD_GAME )]

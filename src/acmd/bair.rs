@@ -1,4 +1,4 @@
-use super::*;
+use super::super::*;
 const DAMAGE:[f32;3] = [15.0,12.0,10.0];
 const ANGLE:[u64;3] =  [280,50,361];
 const BKB:[i32;3] =  [32,25,20];

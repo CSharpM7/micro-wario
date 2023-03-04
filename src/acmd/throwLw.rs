@@ -1,4 +1,4 @@
-use super::*;
+use super::super::*;
 
 #[acmd_script( agent = "wario", script = "game_throwlw", category = ACMD_GAME )]
 unsafe fn game_throwlw(fighter: &mut L2CAgentBase) {

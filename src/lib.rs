@@ -10,7 +10,6 @@
     deprecated
 )]
 
-
 use smash::{
     lib::{
         L2CValue,
@@ -37,6 +36,7 @@ use smash_script::{
 };
 use smashline::*;
 
+
 #[skyline::from_offset(0x3ac540)]
 pub fn get_battle_object_from_id(id: u32) -> *mut BattleObject;
 
@@ -57,6 +57,7 @@ pub unsafe fn get_entry(fighter: &mut L2CAgentBase) -> u32 {
 
 mod acmd;
 mod status;
+mod data;
 
 pub const THROW_F_STATUS_KIND: i32 = 0x45;
 pub const THROW_B_STATUS_KIND: i32 = 0x46;
@@ -121,6 +122,8 @@ std::arch::global_asm!(
 );
 #[no_mangle]
 pub extern "C" fn main() {
+    println!("[smashline_wario::main] Loading...");
+    data::install();
     acmd::install();
     status::install();
     smashline::install_agent_init_callbacks!(
@@ -129,4 +132,5 @@ pub extern "C" fn main() {
     install_agent_resets!(
         agent_reset
     );
+    println!("[smashline_wario::main] HERE I GO!");
 }

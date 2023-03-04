@@ -1,0 +1,58 @@
+{
+	"unshare-blacklist": [
+		"fighter/wario/motion/body/c00/c05attackairb.nuanmb",
+		"fighter/wario/motion/body/c00/c05landingairb.nuanmb",
+		"fighter/wario/motion/body/c00/c05attackairlw.nuanmb",
+		"fighter/wario/motion/body/c00/c05landingairlw.nuanmb",
+		
+		"fighter/wario/motion/body/c00/e00catchattack.nuanmb",
+		
+		"fighter/wario/motion/body/c00/e01throwhi.nuanmb",
+		"fighter/wario/motion/body/c00/e01thrownbighi.nuanmb",
+		"fighter/wario/motion/body/c00/e01throwndxhi.nuanmb",
+		"fighter/wario/motion/body/c00/e01thrownhi.nuanmb",
+		
+		"fighter/wario/motion/body/c00/e01thrownbigf.nuanmb",
+		"fighter/wario/motion/body/c00/e01throwndxf.nuanmb",
+		"fighter/wario/motion/body/c00/e01thrownf.nuanmb",
+		"fighter/wario/motion/body/c00/e01throwngirlf.nuanmb"
+    ],
+    "share-to-added": {
+		"fighter/wario/motion/body/c00/motion_list.motdiff": [
+            "fighter/wario/motion/body/c01/motion_list.motdiff",
+            "fighter/wario/motion/body/c02/motion_list.motdiff",
+            "fighter/wario/motion/body/c03/motion_list.motdiff",
+            "fighter/wario/motion/body/c04/motion_list.motdiff",
+            "fighter/wario/motion/body/c05/motion_list.motdiff",
+            "fighter/wario/motion/body/c06/motion_list.motdiff",
+            "fighter/wario/motion/body/c07/motion_list.motdiff"
+        ],
+		"fighter/wario/motion/body/c00/c05attackairb.nuanmb": [
+            "fighter/wario/motion/body/c01/c05attackairb.nuanmb",
+            "fighter/wario/motion/body/c02/c05attackairb.nuanmb",
+            "fighter/wario/motion/body/c03/c05attackairb.nuanmb",
+            "fighter/wario/motion/body/c04/c05attackairb.nuanmb",
+            "fighter/wario/motion/body/c05/c05attackairb.nuanmb",
+            "fighter/wario/motion/body/c06/c05attackairb.nuanmb",
+            "fighter/wario/motion/body/c07/c05attackairb.nuanmb"
+        ],
+		"fighter/wario/motion/body/c00/c05landingairb.nuanmb": [
+            "fighter/wario/motion/body/c01/c05landingairb.nuanmb",
+            "fighter/wario/motion/body/c02/c05landingairb.nuanmb",
+            "fighter/wario/motion/body/c03/c05landingairb.nuanmb",
+            "fighter/wario/motion/body/c04/c05landingairb.nuanmb",
+            "fighter/wario/motion/body/c05/c05landingairb.nuanmb",
+            "fighter/wario/motion/body/c06/c05landingairb.nuanmb",
+            "fighter/wario/motion/body/c07/c05landingairb.nuanmb"
+        ],
+		"fighter/wario/motion/body/c00/e00catchattack.nuanmb": [
+            "fighter/wario/motion/body/c01/e00catchattack.nuanmb",
+            "fighter/wario/motion/body/c02/e00catchattack.nuanmb",
+            "fighter/wario/motion/body/c03/e00catchattack.nuanmb",
+            "fighter/wario/motion/body/c04/e00catchattack.nuanmb",
+            "fighter/wario/motion/body/c05/e00catchattack.nuanmb",
+            "fighter/wario/motion/body/c06/e00catchattack.nuanmb",
+            "fighter/wario/motion/body/c07/e00catchattack.nuanmb"
+        ]
+    }
+}
