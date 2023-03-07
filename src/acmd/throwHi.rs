@@ -76,7 +76,7 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
         KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_FALL);
         KineticModule::suspend_energy(fighter.module_accessor,*FIGHTER_KINETIC_ENERGY_ID_CONTROL);
 
-        let speed = smash::phx::Vector3f { x: 0.0, y: -5.5, z: 0.0 };
+        let speed = smash::phx::Vector3f { x: 0.0, y: -3.75, z: 0.0 };
         KineticModule::add_speed(fighter.module_accessor, &speed);
 
         macros::ATTACK_IGNORE_THROW(fighter, 0, 0, Hash40::new("rot"), 10.0*factorPower, 270, 90, 0, 15, 4.75*factorSize, 0.0, 0.0, 0.0, Some(0.0), Some(0.5), Some(0.0), 1.2, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_A, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_none"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);

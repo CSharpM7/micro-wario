@@ -105,7 +105,7 @@ unsafe fn wario_throwk_pre(fighter: &mut L2CFighterCommon) -> L2CValue {
 unsafe fn wario_throwk_init(fighter: &mut L2CFighterCommon) -> L2CValue {
     fighter.sub_status_uniq_process_ThrowKirby_initStatus();
     
-    let hitStop = 4;
+    let hitStop = 8;
     WorkModule::set_int(fighter.module_accessor, hitStop, *FIGHTER_STATUS_THROW_WORK_INT_STOP_FRAME);
 
     return false.into();
