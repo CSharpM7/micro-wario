@@ -4,7 +4,7 @@ mod bair;
 mod dair;
 mod catch;
 mod throwF;
-pub mod throwDriver;
+pub mod throwHi;
 mod throwLw;
 
 use crate::data::gamemodes::*;
@@ -14,7 +14,7 @@ pub fn install() {
     dair::install();
     catch::install();
     throwF::install();
-    throwDriver::install();
+    throwHi::install();
 
     if !is_HDR(){
         throwLw::install();

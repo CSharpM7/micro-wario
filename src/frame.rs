@@ -1,5 +1,5 @@
 use super::*;
-
+//Deprecated 
 
 unsafe fn dair_bounce(fighter: &mut L2CFighterCommon){
     let dairRiseAnim = Hash40::new("attack_air_lw2");

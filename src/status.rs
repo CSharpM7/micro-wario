@@ -48,7 +48,7 @@ unsafe fn wario_catch_attack_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW, condition = LUA_SCRIPT_STATUS_FUNC_EXEC_STATUS)]
 unsafe fn wario_throw_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     let throwB = Hash40::new("throw_b");
-    let throwDriver = Hash40::new("throw_hi");
+    let throwHi = Hash40::new("throw_hi");
     let currentFrame = MotionModule::frame(fighter.module_accessor);
     let speed_max = 0.75;
     let accel = 0.0075;
@@ -104,6 +104,7 @@ unsafe fn wario_throwk_pre(fighter: &mut L2CFighterCommon) -> L2CValue {
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW_KIRBY, condition = LUA_SCRIPT_STATUS_FUNC_INIT_STATUS)]
 unsafe fn wario_throwk_init(fighter: &mut L2CFighterCommon) -> L2CValue {
     fighter.sub_status_uniq_process_ThrowKirby_initStatus();
+    
     let hitStop = 2;
     WorkModule::set_int(fighter.module_accessor, hitStop, *FIGHTER_STATUS_THROW_WORK_INT_STOP_FRAME);
 
@@ -132,9 +133,9 @@ unsafe fn wario_throwk_end(fighter: &mut L2CFighterCommon) -> L2CValue {
 
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW_KIRBY, condition = LUA_SCRIPT_STATUS_FUNC_EXEC_STATUS)]
 unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
-    let FRAME_FALL = acmd::throwDriver::FRAME_FALL;
+    let FRAME_FALL = acmd::throwHi::FRAME_FALL;
     let FRAME_FALLLOOP = FRAME_FALL+2.0;
-    let FRAME_LAND = acmd::throwDriver::FRAME_LAND; //+1 due to set_frame offset
+    let FRAME_LAND = acmd::throwHi::FRAME_LAND; //+1 due to set_frame offset
 
     let currentFrame = MotionModule::frame(fighter.module_accessor);
     if currentFrame >= FRAME_LAND {
@@ -179,7 +180,7 @@ unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
             let entry = get_entry(fighter) as usize;
             let opponent = get_grabbed_opponent_boma(fighter.module_accessor);
             let opponentScale = PostureModule::scale(opponent);
-            if acmd::throwDriver::THROWHI_HEAVY[entry]
+            if acmd::throwHi::THROWHI_HEAVY[entry]
             && opponentScale >= 1.0 { 
                 macros::EFFECT_FOLLOW(fighter, Hash40::new("sys_merikomi"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, (opponentScale+0.4), true);
             }
@@ -190,13 +191,12 @@ unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
 }
 
 
-#[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_LANDING_ATTACK_AIR, condition = LUA_SCRIPT_STATUS_FUNC_EXIT_STATUS)]
-unsafe fn wario_landing_attack_exit(fighter: &mut L2CFighterCommon) -> L2CValue {
+#[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_LANDING_ATTACK_AIR, condition = LUA_SCRIPT_STATUS_FUNC_STATUS_END)]
+unsafe fn wario_landing_attack_end(fighter: &mut L2CFighterCommon) -> L2CValue {
     macros::EFFECT_OFF_KIND(fighter, Hash40::new("sys_merikomi"),false,true);
     return false.into();
 }
 
-//Replaced with frame
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_ATTACK_AIR, condition = LUA_SCRIPT_STATUS_FUNC_EXEC_STATUS)]
 unsafe fn wario_attack_air_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     let dairAnim = Hash40::new("attack_air_lw");
@@ -214,6 +214,7 @@ unsafe fn wario_attack_air_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     return false.into();
 }
 
+
 pub fn install() {
     install_status_scripts!(
         wario_catch_attack_exec,
@@ -225,8 +226,8 @@ pub fn install() {
         wario_throwk_end,
         wario_throwk_exec,
 
-        wario_landing_attack_exit,
-        //wario_attack_air_exec
+        wario_landing_attack_end,
+        wario_attack_air_exec
     );
     if !is_HDR(){
         install_status_scripts!(
