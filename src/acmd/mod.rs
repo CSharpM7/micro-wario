@@ -7,17 +7,16 @@ mod throwF;
 pub mod throwDriver;
 mod throwLw;
 
+use crate::data::gamemodes::*;
+
 pub fn install() {
     bair::install();
     dair::install();
     catch::install();
     throwF::install();
     throwDriver::install();
-    throwLw::install();
 
-    unsafe{
-        if !is_ULTS(){
-            //this is where downsmash goes
-        }
+    if !is_HDR(){
+        throwLw::install();
     }
 }

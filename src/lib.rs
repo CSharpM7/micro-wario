@@ -82,7 +82,7 @@ std::arch::global_asm!(
 #[no_mangle]
 pub extern "C" fn main() {
     println!("[smashline_wario::main] Loading...");
-    data::install();
+    //data::install();
     data::gamemodes::set_gamemode();
     acmd::install();
     status::install();
