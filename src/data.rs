@@ -12,17 +12,21 @@ use arcropolis_api;
 
 pub mod gamemodes{
     use super::*;
+    use lazy_static::lazy_static;
     
-    pub static mut GAMEMODE: i32 = 0;
+    lazy_static! {
+        static ref GAMEMODE: RwLock<i32> = RwLock::new(0);
+    }
+    //pub static mut GAMEMODE: i32 = 0;
     pub const GAMEMODE_HDR: i32 = 1;
     pub const GAMEMODE_ULTS: i32 = 2;
-    pub unsafe fn is_HDR() -> bool
+    pub fn is_HDR() -> bool
     {
-        return GAMEMODE == GAMEMODE_HDR;
+        return *GAMEMODE.read().unwrap() == GAMEMODE_HDR;
     }
-    pub unsafe fn is_ULTS() -> bool
+    pub fn is_ULTS() -> bool
     {
-        return GAMEMODE == GAMEMODE_ULTS;
+        return *GAMEMODE.read().unwrap() == GAMEMODE_ULTS;
     }
 
 
@@ -52,12 +56,12 @@ pub mod gamemodes{
             ultS_enabled = ultS_enabled || arcropolis_api::is_mod_enabled(arcropolis_api::hash40(ultS_folderStage).as_u64())
         }
         println!("[smashline_wario::data] Ult-S: {}",ultS_enabled);
-        unsafe{
+        {
             if hdr_enabled{
-                GAMEMODE = GAMEMODE_HDR;
+                *GAMEMODE.write().unwrap() = GAMEMODE_HDR;
             }
             else if ultS_enabled{
-                GAMEMODE = GAMEMODE_ULTS;
+                *GAMEMODE.write().unwrap() = GAMEMODE_ULTS;
             }
         }
 

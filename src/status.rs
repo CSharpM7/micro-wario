@@ -16,11 +16,14 @@ unsafe fn wario_catch_attack_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     {Hash40::new("damage_elec")} //damage_air_3, damage_elec ottotto_wait
     else {Hash40::new("capture_wait_lw")};
     
-    if MotionModule::motion_kind(defender) != defenderAnim.hash{
-        MotionModule::change_motion(defender, defenderAnim, 1.0, 1.0, false, 0.0, false, false);
-        MotionModule::set_rate(defender, 0.5);
-        //MotionModule::change_motion_kind(defender, defenderAnim);
+    if (currentFrame>1.0 && currentFrame<=cutOff-1.0){
+        if MotionModule::motion_kind(defender) != Hash40::new("damage_elec").hash{
+            MotionModule::change_motion(defender, Hash40::new("damage_elec"), 1.0, 1.0, false, 0.0, false, false);
+            MotionModule::set_rate(defender, 0.5);
+            //MotionModule::change_motion_kind(defender, defenderAnim);
+        }
     }
+    
     if (currentFrame<=cutOff+2.0){
         let lrRot = if (PostureModule::lr(fighter.module_accessor) <0.0) {0.0} else {180.0};
         let rot = Vector3f{x: 5.0, y: 0.0, z: 0.0};
@@ -100,7 +103,7 @@ unsafe fn wario_throwk_pre(fighter: &mut L2CFighterCommon) -> L2CValue {
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW_KIRBY, condition = LUA_SCRIPT_STATUS_FUNC_INIT_STATUS)]
 unsafe fn wario_throwk_init(fighter: &mut L2CFighterCommon) -> L2CValue {
     fighter.sub_status_uniq_process_ThrowKirby_initStatus();
-    let hitStop = 8;
+    let hitStop = 2;
     WorkModule::set_int(fighter.module_accessor, hitStop, *FIGHTER_STATUS_THROW_WORK_INT_STOP_FRAME);
 
     return false.into();
@@ -211,7 +214,6 @@ unsafe fn wario_attack_air_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
 pub fn install() {
     install_status_scripts!(
         wario_catch_attack_exec,
-        wario_throw_exec,
 
         wario_throwk_pre,
         wario_throwk_init,
@@ -223,4 +225,9 @@ pub fn install() {
         wario_landing_attack_exit,
         wario_attack_air_exec
     );
+    if !is_HDR(){
+        install_status_scripts!(
+            wario_throw_exec,
+        );
+    }
 }
