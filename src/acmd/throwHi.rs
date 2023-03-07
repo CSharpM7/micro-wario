@@ -1,5 +1,5 @@
 use super::super::*;
-pub const FRAME_FALL: f32 = 50.0;
+pub const FRAME_FALL: f32 = 48.0;
 pub const FRAME_LAND: f32 = 55.0;
 pub const FRAME_THROW: f32 = 58.0;
 pub static mut THROWHI_HEAVY:[bool;8] = [false; 8];
@@ -72,11 +72,15 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
 
     frame(fighter.lua_state_agent, FRAME_FALL);
     if macros::is_excute(fighter) {
-        let speed = smash::phx::Vector3f { x: 0.0, y: -1.0, z: 0.0 };
+        
+        KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_FALL);
+        KineticModule::suspend_energy(fighter.module_accessor,*FIGHTER_KINETIC_ENERGY_ID_CONTROL);
+
+        let speed = smash::phx::Vector3f { x: 0.0, y: -5.5, z: 0.0 };
         KineticModule::add_speed(fighter.module_accessor, &speed);
 
-        macros::ATTACK_IGNORE_THROW(fighter, 0, 0, Hash40::new("rot"), 10.0*factorPower, 270, 90, 0, 15, 4.75*factorSize, 0.0, 0.0, 0.0, Some(0.0), Some(0.5), Some(0.0), 1.2, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_A, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
-        macros::ATTACK_IGNORE_THROW(fighter, 1, 0, Hash40::new("rot"), 8.0*factorPower, 50, 70, 0, 100, 6.0*factorSize, 0.0, 0.0, 0.0, Some(0.0), Some(2.5), Some(0.0), 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
+        macros::ATTACK_IGNORE_THROW(fighter, 0, 0, Hash40::new("rot"), 10.0*factorPower, 270, 90, 0, 15, 4.75*factorSize, 0.0, 0.0, 0.0, Some(0.0), Some(0.5), Some(0.0), 1.2, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_A, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_none"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
+        macros::ATTACK_IGNORE_THROW(fighter, 1, 0, Hash40::new("rot"), 8.0*factorPower, 50, 70, 0, 100, 6.0*factorSize, 0.0, 0.0, 0.0, Some(0.0), Some(2.5), Some(0.0), 1.0, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_POS, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_none"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_KICK, *ATTACK_REGION_THROW);
     }
     wait(fighter.lua_state_agent, 2.0);
     if macros::is_excute(fighter) {
@@ -93,7 +97,7 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
         AttackModule::set_catch_only_all(fighter.module_accessor, true, false);
 
     }
-    wait(fighter.lua_state_agent, 2.0);
+    //wait(fighter.lua_state_agent, 1.0);
     if macros::is_excute(fighter) {
         WorkModule::on_flag(fighter.module_accessor, *FIGHTER_STATUS_THROW_FLAG_STOP);
         WorkModule::set_float(fighter.module_accessor, 5.0, *FIGHTER_INSTANCE_WORK_ID_FLOAT_FINISH_CAMERA_THROW_RAY_LENGTH);
@@ -102,7 +106,7 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
         lua_bind::FighterCutInManager::set_throw_finish_zoom_rate(singletons::FighterCutInManager(), 1.5);
         lua_bind::FighterCutInManager::set_throw_finish_offset(singletons::FighterCutInManager(), Vector3f{x: 3.0, y: -3.0, z: 0.0})
     } 
-    wait(fighter.lua_state_agent, 1.0);
+    wait(fighter.lua_state_agent, 2.0);
     if is_excute(fighter) {
         AttackModule::clear_all(fighter.module_accessor);
         let target = WorkModule::get_int64(fighter.module_accessor, *FIGHTER_STATUS_THROW_WORK_INT_TARGET_OBJECT);
@@ -139,12 +143,6 @@ unsafe fn effect_throwhi(fighter: &mut L2CAgentBase) {
         macros::EFFECT_FOLLOW_FLIP_ALPHA(fighter, Hash40::new("wario_attack_air_n"), Hash40::new("wario_attack_air_n"), Hash40::new("rot"), 0, 5, 0, 0, -90, 0, (opponentScale+0.4), true, *EF_FLIP_YZ, 0.6);
         LAST_EFFECT_SET_RATE(fighter,1.25);
     }
-    /*
-    frame(fighter.lua_state_agent, 35.0);
-    if macros::is_excute(fighter) {
-        macros::EFFECT_FOLLOW_FLIP_ALPHA(fighter, Hash40::new("wario_attack_air_n"), Hash40::new("wario_attack_air_n"), Hash40::new("rot"), 0, 3, 0, 0, -90, 0, 1, true, *EF_FLIP_YZ, 1);
-        macros::EFFECT_FOLLOW_FLIP_ALPHA(fighter, Hash40::new("wario_attack_air_n"), Hash40::new("wario_attack_air_n"), Hash40::new("rot"), 0, 4, 0, 0, -90, 0, 1.8, true, *EF_FLIP_YZ, 0.6);
-    } */
     frame(fighter.lua_state_agent, FRAME_FALL-3.0);
     if macros::is_excute(fighter) {
         macros::EFFECT(fighter, Hash40::new("sys_smash_flash_s"), Hash40::new("top"), 0, -1.0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, true);
@@ -155,13 +153,13 @@ unsafe fn effect_throwhi(fighter: &mut L2CAgentBase) {
         macros::LAST_EFFECT_SET_RATE(fighter, 0.5);
     }
 
-
-    frame(fighter.lua_state_agent, FRAME_LAND-1.0);
+/* 
+    frame(fighter.lua_state_agent, FRAME_LAND-2.0);
     if macros::is_excute(fighter) {
         macros::LANDING_EFFECT(fighter, Hash40::new("sys_down_smoke"), Hash40::new("top"), 0, 0, -3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
         macros::LAST_EFFECT_SET_RATE(fighter, 0.8);
         macros::EFFECT(fighter, Hash40::new("sys_crown"), Hash40::new("top"), 0, 0, -3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
-    }
+    }*/
     /* 
     wait(fighter.lua_state_agent, 4.0);
     if macros::is_excute(fighter) {

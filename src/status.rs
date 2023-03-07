@@ -105,7 +105,7 @@ unsafe fn wario_throwk_pre(fighter: &mut L2CFighterCommon) -> L2CValue {
 unsafe fn wario_throwk_init(fighter: &mut L2CFighterCommon) -> L2CValue {
     fighter.sub_status_uniq_process_ThrowKirby_initStatus();
     
-    let hitStop = 2;
+    let hitStop = 4;
     WorkModule::set_int(fighter.module_accessor, hitStop, *FIGHTER_STATUS_THROW_WORK_INT_STOP_FRAME);
 
     return false.into();
@@ -157,14 +157,15 @@ unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     if (currentFrame >= FRAME_FALLLOOP && currentFrame < FRAME_LAND)
     {
         MotionModule::set_rate(fighter.module_accessor, 0.0);
-        let speed = smash::phx::Vector3f { x: 0.0, y: -0.375, z: 0.0 };
+        let speed = smash::phx::Vector3f { x: 0.0, y: -0.425, z: 0.0 };
         KineticModule::add_speed(fighter.module_accessor, &speed);
     }
-    else if currentFrame > FRAME_FALL {
+    /*
+    else if currentFrame >= FRAME_FALL {
         if (currentFrame <2.0 + FRAME_FALL) {println!("FALL");}
         KineticModule::change_kinetic(fighter.module_accessor, *FIGHTER_KINETIC_TYPE_FALL);
         KineticModule::suspend_energy(fighter.module_accessor,*FIGHTER_KINETIC_ENERGY_ID_CONTROL);
-    }
+    } */
 
     //Groundcast to see if we touched the ground (only after falling), then cut to the landing frame
     if currentFrame >= FRAME_FALL
@@ -177,6 +178,7 @@ unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
             //GroundModule::correct(fighter.module_accessor, GroundCorrectKind(*GROUND_CORRECT_KIND_GROUND));
             KineticModule::resume_energy(fighter.module_accessor,*FIGHTER_KINETIC_ENERGY_ID_CONTROL);
             
+            //Spawn effects//
             let entry = get_entry(fighter) as usize;
             let opponent = get_grabbed_opponent_boma(fighter.module_accessor);
             let opponentScale = PostureModule::scale(opponent);
@@ -184,6 +186,10 @@ unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
             && opponentScale >= 1.0 { 
                 macros::EFFECT_FOLLOW(fighter, Hash40::new("sys_merikomi"), Hash40::new("top"), 0, 0, 0, 0, 0, 0, (opponentScale+0.4), true);
             }
+            
+            macros::LANDING_EFFECT(fighter, Hash40::new("sys_down_smoke"), Hash40::new("top"), 0, 0, -3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
+            macros::LAST_EFFECT_SET_RATE(fighter, 0.8);
+            macros::EFFECT(fighter, Hash40::new("sys_crown"), Hash40::new("top"), 0, 0, -3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, false);
         }
     }
 
