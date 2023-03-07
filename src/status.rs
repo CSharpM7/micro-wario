@@ -68,10 +68,11 @@ unsafe fn wario_throw_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
                 0.0,
                 0.0
             );
-            KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_CONTROL);
+            KineticModule::unable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_CONTROL);
         }
         if currentFrame < maxFrame
         {
+            KineticModule::enable_energy(fighter.module_accessor, *FIGHTER_KINETIC_ENERGY_ID_CONTROL);
             sv_kinetic_energy!(
                 set_stable_speed,
                 fighter,
@@ -194,6 +195,8 @@ unsafe fn wario_landing_attack_exit(fighter: &mut L2CFighterCommon) -> L2CValue 
     macros::EFFECT_OFF_KIND(fighter, Hash40::new("sys_merikomi"),false,true);
     return false.into();
 }
+
+//Replaced with frame
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_ATTACK_AIR, condition = LUA_SCRIPT_STATUS_FUNC_EXEC_STATUS)]
 unsafe fn wario_attack_air_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
     let dairAnim = Hash40::new("attack_air_lw");
@@ -223,7 +226,7 @@ pub fn install() {
         wario_throwk_exec,
 
         wario_landing_attack_exit,
-        wario_attack_air_exec
+        //wario_attack_air_exec
     );
     if !is_HDR(){
         install_status_scripts!(

@@ -1,5 +1,7 @@
 display_name="Wario's Moveset Shake-up"
 description="""
+Some of Wario's moves have been changed to more accurately reflect his Wario Land/World abilities! Is this the new top tier to fear?
+Requires Smashline and Skyline
 """
 version="0.9"
 category="Param"

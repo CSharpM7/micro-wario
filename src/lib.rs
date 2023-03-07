@@ -40,6 +40,7 @@ use smashline::*;
 extern crate lazy_static;
 
 mod acmd;
+mod frame;
 mod status;
 mod agent;
 pub mod data;
@@ -85,6 +86,7 @@ pub extern "C" fn main() {
     //data::install();
     data::gamemodes::set_gamemode();
     acmd::install();
+    frame::install();
     status::install();
     agent::install();
     println!("[smashline_wario::main] HERE I GO!");
