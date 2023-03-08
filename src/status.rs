@@ -1,47 +1,35 @@
 use super::*;
 
-
-#[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_CATCH, condition = LUA_SCRIPT_STATUS_FUNC_EXEC_STATUS)]
-unsafe fn wario_catch_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
-    WorkModule::enable_transition_term(fighter.module_accessor, *FIGHTER_STATUS_TRANSITION_TERM_ID_THROW_KIRBY_GROUND);
-    return false.into();
-}
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_CATCH_ATTACK, condition = LUA_SCRIPT_STATUS_FUNC_EXEC_STATUS)]
 unsafe fn wario_catch_attack_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
 
     let defender= get_grabbed_opponent_boma(fighter.module_accessor);
-    let currentFrame = MotionModule::frame(fighter.module_accessor);
-    let cutOff = 10.0;
-    let defenderAnim = if (currentFrame<=cutOff) 
-    {Hash40::new("damage_elec")} //damage_air_3, damage_elec ottotto_wait
-    else {Hash40::new("capture_wait_lw")};
-    
-    if (currentFrame>1.0 && currentFrame<=cutOff-1.0){
-        if MotionModule::motion_kind(defender) != Hash40::new("damage_elec").hash{
-            MotionModule::change_motion(defender, Hash40::new("damage_elec"), 1.0, 1.0, false, 0.0, false, false);
-            MotionModule::set_rate(defender, 0.5);
-            //MotionModule::change_motion_kind(defender, defenderAnim);
-        }
-    }
-    
-    if (currentFrame<=cutOff+2.0){
-        let lrRot = if (PostureModule::lr(fighter.module_accessor) <0.0) {0.0} else {180.0};
-        let rot = Vector3f{x: 5.0, y: 0.0, z: 0.0};
-        PostureModule::set_rot(
-            defender,
-            &rot,
-            0
-        );
-        PostureModule::update_rot_y_lr(defender);
-    } 
-    else{
-        let rot = Vector3f{x: 0.0, y: 0.0, z: 0.0};
-        PostureModule::set_rot(
-            defender,
-            &rot,
-            0
-        );
-    }
+    if !(sv_battle_object::is_active(defender.battle_object_id)) {return false.into();}
+
+    let mut vec =Vector3f{x: 0.0, y: 0.0, z: 0.0};
+    let offset = ModelModule::joint_global_rotation(fighter.module_accessor,Hash40::new("throw"),&mut vec,false);
+    let rot = Vector3f{x: vec.x, y: 0.0, z: 0.0};
+    PostureModule::set_rot(
+        defender,
+        &rot,
+        0
+    );
+    /* 
+    ModelModule::set_joint_rotate(defender, Hash40::new("hip"), &rot, MotionNodeRotateCompose{_address: *MOTION_NODE_ROTATE_COMPOSE_AFTER as u8}, MotionNodeRotateOrder{_address: *MOTION_NODE_ROTATE_ORDER_XYZ as u8});*/
+    return false.into();
+}
+#[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_CATCH_ATTACK, condition = LUA_SCRIPT_STATUS_FUNC_STATUS_END)]
+unsafe fn wario_catch_attack_end(fighter: &mut L2CFighterCommon) -> L2CValue {
+
+    let defender= get_grabbed_opponent_boma(fighter.module_accessor);
+    if !(sv_battle_object::is_active(defender.battle_object_id)) {return false.into();}
+
+    let rot = Vector3f{x: 0.0, y: 0.0, z: 0.0};
+    PostureModule::set_rot(
+        defender,
+        &rot,
+        0
+    );
     return false.into();
 }
 
@@ -224,6 +212,7 @@ unsafe fn wario_attack_air_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
 pub fn install() {
     install_status_scripts!(
         wario_catch_attack_exec,
+        wario_catch_attack_end,
 
         wario_throwk_pre,
         wario_throwk_init,
