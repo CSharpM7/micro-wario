@@ -5,9 +5,6 @@ unsafe fn game_catchattack(fighter: &mut L2CAgentBase) {
     let boma = fighter.module_accessor;
     let entry = get_entry(fighter) as usize;
     let defender= get_grabbed_opponent_boma(fighter.module_accessor);
-    let defenderMotion_Damage: u64 = WorkModule::get_int64(defender, *FIGHTER_STATUS_DAMAGE_WORK_INT_MOTION_KIND);
-
-
     frame(fighter.lua_state_agent, 2.0);
     if is_excute(fighter) {
         ATTACK(fighter, 0, 0, Hash40::new("top"), 0.9, 361, 100, 30, 0, 5.0, 0.0, 10.0, 7.0, None, None, None, 0.5, 1.0, *ATTACK_SETOFF_KIND_OFF, *ATTACK_LR_CHECK_F, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_coin"), *ATTACK_SOUND_LEVEL_S, *COLLISION_SOUND_ATTR_COIN, *ATTACK_REGION_PUNCH);
