@@ -30,7 +30,7 @@ unsafe fn wario_catch_attack_end(fighter: &mut L2CFighterCommon) -> L2CValue {
         &rot,
         0
     );
-    return false.into();
+    return original!(fighter);
 }
 
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW, condition = LUA_SCRIPT_STATUS_FUNC_EXEC_STATUS)]
