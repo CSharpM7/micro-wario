@@ -121,6 +121,9 @@ unsafe fn wario_throwk_end(fighter: &mut L2CFighterCommon) -> L2CValue {
 
 #[status_script(agent = "wario", status = FIGHTER_STATUS_KIND_THROW_KIRBY, condition = LUA_SCRIPT_STATUS_FUNC_EXEC_STATUS)]
 unsafe fn wario_throwk_exec(fighter: &mut L2CFighterCommon) -> L2CValue {
+    CameraModule::set_enable_camera(fighter.module_accessor,true,0);
+    CameraModule::set_enable_update_pos(fighter.module_accessor,*CAMERA_UPDATE_POS_Y as u8,0);
+
     let FRAME_FALL = acmd::throwHi::FRAME_FALL;
     let FRAME_FALLLOOP = FRAME_FALL+2.0;
     let FRAME_LAND = acmd::throwHi::FRAME_LAND; //+1 due to set_frame offset

@@ -12,9 +12,9 @@ use crate::data::gamemodes::*;
 pub fn install() {
     bair::install();
     dair::install();
-    catch::install();
     throwF::install();
     throwHi::install();
+    catch::install();
 
     if !is_HDR(){
         throwLw::install();
