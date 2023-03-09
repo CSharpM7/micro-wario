@@ -1,6 +1,6 @@
 [package]
 name = "smashline_warioland"
-version = "1.0.0"
+version = "0.9.5"
 authors = ["C# <@CSharpM7>"]
 edition = "2018"
 
