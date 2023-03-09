@@ -188,7 +188,7 @@ unsafe fn sound_throwhi(fighter: &mut L2CAgentBase) {
     if macros::is_excute(fighter) {
         macros::PLAY_SE(fighter, Hash40::new("se_common_throw_01"));
     }
-    frame(fighter.lua_state_agent, FRAME_FALL-3.0);
+    frame(fighter.lua_state_agent, FRAME_FALL-5.0);
     if macros::is_excute(fighter) {
         macros::PLAY_SE(fighter, Hash40::new("vc_wario_006")); //006,final01
     }
