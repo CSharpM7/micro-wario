@@ -108,14 +108,14 @@ unsafe fn game_throwhi(fighter: &mut L2CAgentBase) {
     }
     wait(fighter.lua_state_agent, 2.0);
     if is_excute(fighter) {
+        AttackModule::clear_all(fighter.module_accessor);
+    }
+    wait(fighter.lua_state_agent, 1.0);
+    if is_excute(fighter) {
         let target = WorkModule::get_int64(fighter.module_accessor, *FIGHTER_STATUS_THROW_WORK_INT_TARGET_OBJECT);
         let target_group = WorkModule::get_int64(fighter.module_accessor, *FIGHTER_STATUS_THROW_WORK_INT_TARGET_HIT_GROUP);
         let target_no = WorkModule::get_int64(fighter.module_accessor, *FIGHTER_STATUS_THROW_WORK_INT_TARGET_HIT_NO);
         ATK_HIT_ABS(fighter, *FIGHTER_ATTACK_ABSOLUTE_KIND_THROW, Hash40::new("throw"), target, target_group, target_no);
-    }
-    wait(fighter.lua_state_agent, 1.0);
-    if is_excute(fighter) {
-        AttackModule::clear_all(fighter.module_accessor);
     }
 }
 

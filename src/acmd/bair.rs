@@ -12,8 +12,8 @@ unsafe fn game_attackairb(fighter: &mut L2CAgentBase) {
     }
     frame(fighter.lua_state_agent, 17.0);
     if macros::is_excute(fighter) {
-        
-        macros::ATTACK(fighter, 0, 0, Hash40::new("shoulderr"), DAMAGE[2], ANGLE[2], KBG[2], 0, BKB[2], 3.5, 0.75, 1.0, 1.0, Some(0.75), Some(1.0), Some(1.0), 1.0, 1.0, *ATTACK_SETOFF_KIND_ON, *ATTACK_LR_CHECK_B, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_PUNCH, *ATTACK_REGION_PUNCH); 
+        /* 
+        macros::ATTACK(fighter, 0, 0, Hash40::new("shoulderr"), DAMAGE[2], ANGLE[2], KBG[2], 0, BKB[2], 3.5, 0.75, 1.0, 1.0, Some(0.75), Some(1.0), Some(1.0), 1.0, 1.0, *ATTACK_SETOFF_KIND_ON, *ATTACK_LR_CHECK_B, false, 0, 0.0, 0, false, false, false, false, true, *COLLISION_SITUATION_MASK_GA, *COLLISION_CATEGORY_MASK_ALL, *COLLISION_PART_MASK_ALL, false, Hash40::new("collision_attr_normal"), *ATTACK_SOUND_LEVEL_M, *COLLISION_SOUND_ATTR_PUNCH, *ATTACK_REGION_PUNCH); */
     }
     wait(fighter.lua_state_agent, 1.0);
     if macros::is_excute(fighter) {
