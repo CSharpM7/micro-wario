@@ -1,4 +1,4 @@
-use crate::data::gamemodes::is_ULTS;
+use crate::data::gamemodes::*;
 
 mod bair;
 mod dair;
@@ -7,7 +7,6 @@ mod throwF;
 pub mod throwHi;
 mod throwLw;
 
-use crate::data::gamemodes::*;
 
 pub fn install() {
     bair::install();

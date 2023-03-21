@@ -1,1 +1,3 @@
-cargo skyline install --install-path "sd:/ultimate/mods/WarioShakeUp/plugin.nro"
+$modPath = Get-Item -Path .\modPath.txt | Get-Content -Tail 1
+
+cargo skyline install --install-path $modPath
