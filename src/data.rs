@@ -102,6 +102,7 @@ pub fn patch_files()
             return;
         }
         let file = "motion_list.motdiff";
+        let sourceFolder = format!("{}/c00/",motionFolder.as_str());
         let sourceFile = format!("{}/c00/{}",motionFolder.as_str(),file);
         for slot in 1..slots {
             let buffer = if slot<10 {"0"} else {""};
